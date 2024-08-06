@@ -11,9 +11,15 @@
 <main>
   <div class="center-container">
   <div class="form" id="input">
-    <input autocomplete="off" bind:value={name} class="url-input-box" id="name" type="text"/>
+    <input autocomplete="off" bind:value={name} class="url-input-box" id="name" placeholder="Insert YouTube URL" type="text"/>
   </div>
-  <button class="url-btn" on:click={greet}>Greet</button>
+  <select class="format-select">
+    <option value="">-- Choose Format</option>
+    <option value="mp3">MP3</option>
+    <option value="mp4">MP4</option>
+    <option value="wav">WAV</option>
+  </select>
+  <button class="url-btn" on:click={greet}>Add to queue</button>
 </div>
 </main>
 
