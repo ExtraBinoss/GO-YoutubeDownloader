@@ -13,7 +13,8 @@ You will also need GO 1.16 or later installed. [link here](https://golang.org/do
 - install youtube-dl, ffmpeg
 ```bash
 sudo apt-get install -y ffmpeg
-sudo pip install --break-system-packages --upgrade youtube_dl
+sudo apt-get install -y yt-dlp
+pip install --upgrade --break-system-packages yt-dlp
 ```
 
 ## Live Development
