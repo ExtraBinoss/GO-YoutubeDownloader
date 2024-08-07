@@ -10,7 +10,6 @@
   let author = '' // default author
   let queue_items = [];
   let checkDownloadStatus = '0';
-  let formats = [];
 
   format.toLowerCase();
   
@@ -19,7 +18,7 @@
     WriteALogFile("author fetchvideoauthor : [" + author + "]");
     if (author === '') {
       alert('Please enter a valid YouTube URL and select a format');
-      return;
+      throw new Error('Invalid YouTube URL');
     }
   }
 
@@ -28,7 +27,7 @@
     WriteALogFile("title fetchvideotitle : [" + title + "]");
     if (title === '') {
       alert('Please enter a valid YouTube URL and select a format');
-      return;
+      throw new Error('Invalid YouTube URL');
     }
   }
 
@@ -38,7 +37,7 @@
 
   //let author2 = '';
   async function fn_add_to_queue() {
-    console.log('youtube_url:', youtube_url); // Log youtube_url
+    console.log('youtube_url:', youtube_url);
     WriteALogFile(youtube_url);
     try {
         await FetchVideoAuthor(youtube_url);
@@ -48,6 +47,7 @@
         console.error('Error fetching video author:', error);
         WriteALogFile(error);
         alert('An error occurred while fetching the video author. Please try again.');
+        return;
     }
       const video_id = youtube_url.split('v=')[1];
       queue_items = [
@@ -62,21 +62,6 @@
     ];
     UpdateQueueSize();
     processQueue();
-    // fetchVideoTitle(youtube_url).then(() => {
-    //   const video_id = youtube_url.split('v=')[1];
-    //   queue_items = [
-    //     ...queue_items,
-    //   {
-    //     id: video_id,
-    //     author: author,
-    //     title: title,
-    //     status: 'Pending',
-    //     format: format.toUpperCase()
-    //   }
-    // ];
-    // UpdateQueueSize();
-    // processQueue();
-    // });
   }
 
   function RemoveFromQueue(item) {
