@@ -5,3 +5,15 @@
 export function DownloadVideo(arg1, arg2) {
   return window['go']['main']['App']['DownloadVideo'](arg1, arg2);
 }
+
+export function GetVideoAuthor(arg1) {
+  return window['go']['main']['App']['GetVideoAuthor'](arg1);
+}
+
+export function GetVideoTitle(arg1) {
+  return window['go']['main']['App']['GetVideoTitle'](arg1);
+}
+
+export function WriteALogFile(arg1) {
+  return window['go']['main']['App']['WriteALogFile'](arg1);
+}

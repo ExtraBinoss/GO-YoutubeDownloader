@@ -1,5 +1,7 @@
 <script>
   import {DownloadVideo} from '../wailsjs/go/main/App.js'
+  import {WriteALogFile} from '../wailsjs/go/main/App.js'
+  import {GetVideoAuthor, GetVideoTitle} from '../wailsjs/go/main/App.js'
 
   let youtube_url = '' // default url
   let format = '' // default format
@@ -11,37 +13,22 @@
   let formats = [];
 
   format.toLowerCase();
-
-  // use oEmbed API to get video details (title) I have it installed inside the node_modules
-  import { extract } from 'oembed-parser';
-
-  async function fetchVideoTitle(url) {
-    try {
-      const data = await extract(url);
-      console.log('title Data:', data);
-      if (!data) {
-        alert('Invalid YouTube URL');
-        return;
-      }
-      title = data.title;
-      console.log('Title:', title);
-    } catch (error) {
-      console.error('Error fetching oEmbed data:', error);
-    }
-  }
   
   async function FetchVideoAuthor(url) {
-    try {
-      const data = await extract(url);
-      console.log('author Data:', data);
-      if (!data) {
-        return '';
-      }
-      author = data.author_name;
-      return author;
-    } catch (error) {
-      console.error('Error fetching oEmbed data:', error);
-      return '';
+    author = await GetVideoAuthor(url);
+    WriteALogFile("author fetchvideoauthor : [" + author + "]");
+    if (author === '') {
+      alert('Please enter a valid YouTube URL and select a format');
+      return;
+    }
+  }
+
+  async function FetchVideoTitle(url) {
+    title = await GetVideoTitle(url);
+    WriteALogFile("title fetchvideotitle : [" + title + "]");
+    if (title === '') {
+      alert('Please enter a valid YouTube URL and select a format');
+      return;
     }
   }
 
@@ -49,14 +36,19 @@
     queue_size = queue_items.length;
   }
 
-
+  //let author2 = '';
   async function fn_add_to_queue() {
-    author = await FetchVideoAuthor(youtube_url);
-    if (author === '') {
-      alert('Please enter a valid YouTube URL and select a format');
-      return;
+    console.log('youtube_url:', youtube_url); // Log youtube_url
+    WriteALogFile(youtube_url);
+    try {
+        await FetchVideoAuthor(youtube_url);
+        await FetchVideoTitle(youtube_url);
+        WriteALogFile("author addtoqueue : [" + author + "]");
+    } catch (error) {
+        console.error('Error fetching video author:', error);
+        WriteALogFile(error);
+        alert('An error occurred while fetching the video author. Please try again.');
     }
-    fetchVideoTitle(youtube_url).then(() => {
       const video_id = youtube_url.split('v=')[1];
       queue_items = [
         ...queue_items,
@@ -70,7 +62,21 @@
     ];
     UpdateQueueSize();
     processQueue();
-    });
+    // fetchVideoTitle(youtube_url).then(() => {
+    //   const video_id = youtube_url.split('v=')[1];
+    //   queue_items = [
+    //     ...queue_items,
+    //   {
+    //     id: video_id,
+    //     author: author,
+    //     title: title,
+    //     status: 'Pending',
+    //     format: format.toUpperCase()
+    //   }
+    // ];
+    // UpdateQueueSize();
+    // processQueue();
+    // });
   }
 
   function RemoveFromQueue(item) {
@@ -85,7 +91,7 @@
   async function processQueue() {
     for (let item of queue_items) {
       if (item.status === 'Pending') {
-        item.status = 'Processing';
+        item.status = 'Downloading...';
         checkDownloadStatus = await DownloadVideo("https://www.youtube.com/watch?v=" + item.id, item.format);
         console.log('Download Status:', checkDownloadStatus);
         if (checkDownloadStatus === '1') {
@@ -94,6 +100,7 @@
           console.log("itemstatus", item.status);
           const queueBox = document.querySelector(`.queue-box[data-id="${item.id}"]`);
           if (queueBox) {
+            item.status = 'Completed';
             queueBox.classList.add('completed'); // add status completed to css selector ".queue-box.completed"
             console.log('Queue Box:', queueBox);
           }

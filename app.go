@@ -3,9 +3,35 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+	"os"
 	"os/exec"
 	"strings"
+
+	"gitlab.com/toby3d/oembed"
 )
+
+func (a *App) GetVideoAuthor(url string) string {
+	// Get the video author
+	data, err := oembed.Extract(url, nil)
+	if err != nil {
+		fmt.Println("Error getting author : ", err)
+		return ""
+	}
+	author := data.AuthorName
+	return author
+}
+
+func (a *App) GetVideoTitle(url string) string {
+	// Get the video title
+	data, err := oembed.Extract(url, nil)
+	if err != nil {
+		fmt.Println("Error getting title : ", err)
+		return ""
+	}
+	title := data.Title
+	return title
+}
 
 // App struct
 type App struct {
@@ -34,12 +60,22 @@ func (a *App) DownloadVideo(url string, format string) string {
 		return "0"
 	}
 
-	// Convert output to string and check for "100%"
 	outputStr := string(output)
 	fmt.Println(outputStr)
+	os.WriteFile("output.txt", []byte(outputStr), 0644)
 	if strings.Contains(outputStr, "100%") {
-		fmt.Println("I entered here")
 		return "1"
 	}
 	return "0"
+}
+
+//write to a log file the output of the download, string as parameter, returns void
+func (a *App) WriteALogFile(output string) {
+	file, err := os.OpenFile("app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.SetOutput(file)
+	log.Println(output)
+	file.Close()
 }

@@ -1,0 +1,8 @@
+[youtube] Extracting URL: https://www.youtube.com/watch?v=Wh2bKSEITjE
+[youtube] Wh2bKSEITjE: Downloading webpage
+[youtube] Wh2bKSEITjE: Downloading ios player API JSON
+[youtube] Wh2bKSEITjE: Downloading web creator player API JSON
+[youtube] Wh2bKSEITjE: Downloading m3u8 information
+[info] Wh2bKSEITjE: Downloading 1 format(s): 18
+[download] Brutalismus 3000 - GOODBYE SALÒ (REWORKED LIVESET) - Presented by YouTube [Wh2bKSEITjE].mp4 has already been downloaded
+[download] 100% of  140.45MiB
